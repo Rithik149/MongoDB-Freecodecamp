@@ -1,30 +1,71 @@
-require('dotenv').config();
-const mongoose=require("mongoose")
+require("dotenv").config();
+const mongoose = require("mongoose");
 
+// Connect to MongoDB Atlas causes an error which chatgpt can't even fix
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 });
-let Person;
 
+// Define the schema
+const personSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  age: Number,
+  favoriteFoods: [String],
+});
+
+// Create the model
+let Person = mongoose.model("Person", personSchema);
+
+// Create and Save a Record of a Model 
 const createAndSavePerson = (done) => {
-  done(null /*, data*/);
+  let Rithik = new Person({
+    name: "rithik p",
+    age: 21,
+    favoriteFoods: ["eggs", "chicken", "beef"],
+  });
+
+  Rithik.save((err, data) => {
+    if (err) return console.error(err);
+    done(null, data);
+  });
 };
 
+const arrayOfPeople = [
+  { name: "Alice", age: 25, favoriteFoods: ["pizza", "salad"] },
+  { name: "Bob", age: 30, favoriteFoods: ["steak"] },
+  { name: "Charlie", age: 40, favoriteFoods: ["burrito", "tacos"] },
+];
+// Create Many Records with model.create() passing array and done is like signature
 const createManyPeople = (arrayOfPeople, done) => {
-  done(null /*, data*/);
+  Person.create(arrayOfPeople, (err, people) => {
+    if (err) return console.error(err);
+    done(null, people);
+  });
 };
+
+let personName="Bob"
 
 const findPeopleByName = (personName, done) => {
-  done(null /*, data*/);
+  Person.find({name:personName},(err,people)=>{
+    if(err) return console.error(err)
+    done(null ,people);
+  })
 };
 
+let food=["steak"]
 const findOneByFood = (food, done) => {
-  done(null /*, data*/);
+  Person.findOne({favoriteFoods:food},(err,people)=>{
+    if (err) return console.error(err)
+    done(null ,people);
+  })
 };
 
 const findPersonById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findById(personId,(err,people)=>{
+    if(err) return console.error(err)
+    done(null,people);
+  })
 };
 
 const findEditThenSave = (personId, done) => {
@@ -59,8 +100,7 @@ const queryChain = (done) => {
 /* You completed these challenges, let's go celebrate !
  */
 
-//----- **DO NOT EDIT BELOW THIS LINE** ----------------------------------
-
+// DO NOT EDIT BELOW THIS LINE ----------------------------------
 exports.PersonModel = Person;
 exports.createAndSavePerson = createAndSavePerson;
 exports.findPeopleByName = findPeopleByName;
