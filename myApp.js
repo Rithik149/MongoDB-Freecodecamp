@@ -17,7 +17,7 @@ const personSchema = new mongoose.Schema({
 // Create the model
 let Person = mongoose.model("Person", personSchema);
 
-// Create and Save a Record of a Model 
+// Create and Save a Record of a Model
 const createAndSavePerson = (done) => {
   let Rithik = new Person({
     name: "rithik p",
@@ -44,50 +44,66 @@ const createManyPeople = (arrayOfPeople, done) => {
   });
 };
 
-let personName="Bob"
+let personName = "Bob";
 
 const findPeopleByName = (personName, done) => {
-  Person.find({name:personName},(err,people)=>{
-    if(err) return console.error(err)
-    done(null ,people);
-  })
+  Person.find({ name: personName }, (err, people) => {
+    if (err) return console.error(err);
+    done(null, people);
+  });
 };
 
-let food=["steak"]
+let food = ["steak"];
 const findOneByFood = (food, done) => {
-  Person.findOne({favoriteFoods:food},(err,people)=>{
-    if (err) return console.error(err)
-    done(null ,people);
-  })
+  Person.findOne({ favoriteFoods: food }, (err, people) => {
+    if (err) return console.error(err);
+    done(null, people);
+  });
 };
 
 const findPersonById = (personId, done) => {
-  Person.findById(personId,(err,people)=>{
-    if(err) return console.error(err)
-    done(null,people);
-  })
+  Person.findById(personId, (err, people) => {
+    if (err) return console.error(err);
+    done(null, people);
+  });
 };
 
 const findEditThenSave = (personId, done) => {
   const foodToAdd = "hamburger";
+  Person.findById(personId, (err, people) => {
+    if (err) return console.error(err);
 
-  done(null /*, data*/);
+    people.favoriteFoods.push(foodToAdd);
+
+    people.save((err, updatedPerson) => {
+      if (err) return console.error(err);
+
+      done(null ,updatedPerson);
+    });
+  });
 };
 
 const findAndUpdate = (personName, done) => {
   const ageToSet = 20;
-
-  done(null /*, data*/);
+  Person.findOneAndUpdate({name: personName}, {age: ageToSet}, {new: true}, (err, updatedDoc) => { //You should return the updated document. To do that, you need to pass the options document { new: true } as the 3rd argument
+    if(err) return console.log(err);
+    done(null, updatedDoc);
+  })
 };
 
 const removeById = (personId, done) => {
-  done(null /*, data*/);
+  Person.findByIdAndRemove(personId,(err,data)=>{
+    if (err) return console.error(err)
+    done(null ,data);
+  })
 };
 
 const removeManyPeople = (done) => {
   const nameToRemove = "Mary";
-
-  done(null /*, data*/);
+  Person.remove({name:nameToRemove},(err,data)=>{
+    if (err) return console.error(err)
+    done(null ,data);
+  })
 };
 
 const queryChain = (done) => {
