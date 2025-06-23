@@ -78,38 +78,51 @@ const findEditThenSave = (personId, done) => {
     people.save((err, updatedPerson) => {
       if (err) return console.error(err);
 
-      done(null ,updatedPerson);
+      done(null, updatedPerson);
     });
   });
 };
 
 const findAndUpdate = (personName, done) => {
   const ageToSet = 20;
-  Person.findOneAndUpdate({name: personName}, {age: ageToSet}, {new: true}, (err, updatedDoc) => { //You should return the updated document. To do that, you need to pass the options document { new: true } as the 3rd argument
-    if(err) return console.log(err);
-    done(null, updatedDoc);
-  })
+  Person.findOneAndUpdate(
+    { name: personName },
+    { age: ageToSet },
+    { new: true },
+    (err, updatedDoc) => {
+      //You should return the updated document. To do that, you need to pass the options document { new: true } as the 3rd argument
+      if (err) return console.log(err);
+      done(null, updatedDoc);
+    }
+  );
 };
 
 const removeById = (personId, done) => {
-  Person.findByIdAndRemove(personId,(err,data)=>{
-    if (err) return console.error(err)
-    done(null ,data);
-  })
+  Person.findByIdAndRemove(personId, (err, data) => {
+    if (err) return console.error(err);
+    done(null, data);
+  });
 };
 
 const removeManyPeople = (done) => {
   const nameToRemove = "Mary";
-  Person.remove({name:nameToRemove},(err,data)=>{
-    if (err) return console.error(err)
-    done(null ,data);
-  })
+  Person.remove({ name: nameToRemove }, (err, data) => {
+    if (err) return console.error(err);
+    done(null, data);
+  });
 };
 
 const queryChain = (done) => {
   const foodToSearch = "burrito";
 
-  done(null /*, data*/);
+  Person.find({ favoriteFoods: foodToSearch })
+    .sort({ name: 1 })                            //1 for ascending	order and -1 for descending order.
+    .limit(2)                                    // return array which has x(here 2) items in it.
+    .select({ name: 1 })                        // 1=show 0=hide
+    .exec((err, data) => {
+      if (err) return console.error(err);
+      done(null, data);
+    });
 };
 
 /** **Well Done !!**
